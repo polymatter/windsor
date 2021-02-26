@@ -1,5 +1,11 @@
 <template>
-  <div class="pa-5">{{ id }}. {{ title }}</div>
+  <v-card>
+    <v-card-title>{{ title }}</v-card-title>
+    <v-card-actions>
+      <v-btn>Edit</v-btn>
+      <v-btn color="error">Delete</v-btn>
+    </v-card-actions>
+  </v-card>
 </template>
 
 <script>

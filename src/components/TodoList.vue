@@ -1,5 +1,13 @@
 <template>
   <div class="todo-list">
+    <v-card>
+      <v-card-text>
+        <v-text-field placeholder="New Todo"></v-text-field>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn color="primary">Add</v-btn>
+      </v-card-actions>
+    </v-card>
     <TodoItem
       v-for="todo in todos"
       :key="todo.id"
