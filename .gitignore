@@ -1,6 +1,6 @@
 .DS_Store
 node_modules
-/dist
+# /dist #actually want the dist folder to have deployed.
 
 
 # local env files
