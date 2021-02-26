@@ -1,21 +1,18 @@
 <template>
-  <div class="pa-5">
-    {{ id }}. {{ title }}
-  </div>
+  <div class="pa-5">{{ id }}. {{ title }}</div>
 </template>
 
 <script>
 export default {
-  name: 'Todo',
+  name: "Todo",
   props: {
     id: Number,
     title: String,
-    completed: Boolean
-  }
-}
+    completed: Boolean,
+  },
+};
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 h3 {
   margin: 40px 0 0;

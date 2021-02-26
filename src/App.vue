@@ -1,13 +1,7 @@
 <template>
   <v-app>
-    <v-app-bar
-      app
-      color="primary"
-      dark
-    >
-      <div class="d-flex align-center">
-        Todo tech test
-      </div>
+    <v-app-bar app color="primary" dark>
+      <div class="d-flex align-center">Todo tech test</div>
 
       <v-spacer></v-spacer>
 
@@ -28,17 +22,13 @@
 </template>
 
 <script>
-
-// import HelloWorld from './components/HelloWorld';
-import TodoList from './components/TodoList';
+import TodoList from "./components/TodoList";
 
 export default {
-  name: 'App',
+  name: "App",
 
   components: {
     TodoList,
   },
-
-
 };
 </script>
