@@ -1,6 +1,7 @@
 <template>
   <div class="todo-list">
-    <v-card>
+    <v-card class="mt-5 mb-5 elevation-5">
+      <v-card-title>New Todo</v-card-title>
       <v-card-text>
         <v-text-field id="newTodoTitle" placeholder="New Todo"></v-text-field>
       </v-card-text>
@@ -8,6 +9,9 @@
         <v-btn color="primary" @click="createTodo">Add</v-btn>
       </v-card-actions>
     </v-card>
+
+    <v-divider></v-divider>
+
     <TodoItem
       v-for="todo in todos"
       :key="todo.id"
@@ -109,18 +113,20 @@ export default {
       fetch(`${url}/${id}`, {
         method: "PUT",
         body: JSON.stringify({
-          id, title,
+          id,
+          title,
           userId: 1,
         }),
         headers: {
           "Content-type": "application/json; charset=UTF-8",
         },
-      }).then((response) => response.json())
-      .then(data => {
-        this.todos = this.todos.filter((todo) => todo.id != id);
-        this.todos.splice(0, 0, data);
-        this.showSaved = true;
       })
+        .then((response) => response.json())
+        .then((data) => {
+          this.todos = this.todos.filter((todo) => todo.id != id);
+          this.todos.splice(0, 0, data);
+          this.showSaved = true;
+        });
     },
   },
 

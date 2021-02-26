@@ -45,7 +45,7 @@ export default {
       this.editMode = true;
     },
     saveTodo: function () {
-      const newTitle = document.querySelector('#editTextBox').value;
+      const newTitle = document.querySelector("#editTextBox").value;
       this.$emit("saveTodo", { id: this.id, title: newTitle });
       this.editMode = false;
     },
@@ -54,5 +54,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>
