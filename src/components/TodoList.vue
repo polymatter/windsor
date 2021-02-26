@@ -23,6 +23,15 @@
         </v-btn>
       </template>
     </v-snackbar>
+
+    <v-snackbar v-model="showAdded">
+      Added {{ addedTitle }}
+      <template v-slot:action="{ attrs }">
+        <v-btn color="primary" text v-bind="attrs" @click="showAdded = false">
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
@@ -41,7 +50,9 @@ export default {
   data: () => ({
     todos: [],
     showDeleted: false,
+    showAdded: false,
     deletedTitle: "",
+    addedTitle: "",
   }),
 
   methods: {
@@ -53,7 +64,8 @@ export default {
         });
     },
     createTodo: function () {
-      const newTodoTitle = document.querySelector('#newTodoTitle').value;
+      const newTodoTitleBox = document.querySelector('#newTodoTitle')
+      const newTodoTitle = newTodoTitleBox.value;
       fetch(url, {
         method: "POST",
         body: JSON.stringify({
@@ -68,6 +80,9 @@ export default {
         .then((response) => response.json())
         .then(data => {
           this.todos.splice(0, 0, data);
+          this.showAdded = true;
+          this.addedTitle = data.title;
+          newTodoTitleBox.value = "";
         });
     },
     deleteTodo: function (id) {
