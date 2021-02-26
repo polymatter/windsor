@@ -13,7 +13,7 @@
     <v-divider></v-divider>
 
     <TodoItem
-      v-for="todo in todos"
+      v-for="todo in filteredTodos"
       :key="todo.id"
       :title="todo.title"
       :id="todo.id"
@@ -56,7 +56,9 @@ const url = "https://jsonplaceholder.typicode.com/todos";
 
 export default {
   name: "TodoList",
-
+  props: {
+    filter: String
+  },
   components: {
     TodoItem,
   },
@@ -128,6 +130,12 @@ export default {
           this.showSaved = true;
         });
     },
+  },
+
+  computed: {
+    filteredTodos: function() {
+      return this.todos.filter(todo => todo.title.match(this.filter));
+    }
   },
 
   mounted: function () {

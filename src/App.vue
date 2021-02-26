@@ -4,10 +4,12 @@
       <div class="d-flex align-center">Todo tech test</div>
 
       <v-spacer></v-spacer>
+
+      <v-text-field v-model="filter" placeholder="Filter" />
     </v-app-bar>
 
     <v-main>
-      <TodoList />
+      <TodoList :filter="filter" />
     </v-main>
   </v-app>
 </template>
@@ -21,5 +23,9 @@ export default {
   components: {
     TodoList,
   },
+
+  data: () => ({
+    filter: ""
+  })
 };
 </script>
