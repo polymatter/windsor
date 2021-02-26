@@ -13,7 +13,16 @@
       :key="todo.id"
       :title="todo.title"
       :id="todo.id"
+      @deleteTodo="deleteTodo"
     />
+    <v-snackbar v-model="showDeleted">
+      Deleted {{ deletedTitle }}
+      <template v-slot:action="{ attrs }">
+        <v-btn color="red" text v-bind="attrs" @click="showDeleted = false">
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
@@ -31,6 +40,8 @@ export default {
 
   data: () => ({
     todos: [],
+    showDeleted: false,
+    deletedTitle: ''
   }),
 
   methods: {
@@ -40,6 +51,14 @@ export default {
         .then((data) => {
           this.todos = data;
         });
+    },
+    deleteTodo: function (id) {
+      fetch(`${url}/${id}`, {
+        method: "DELETE",
+      });
+      this.showDeleted = true;
+      this.deletedTitle = this.todos.filter(todo => todo.id == id)[0].title;
+      this.todos = this.todos.filter((todo) => todo.id != id);
     },
   },
 

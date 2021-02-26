@@ -3,7 +3,7 @@
     <v-card-title>{{ title }}</v-card-title>
     <v-card-actions>
       <v-btn>Edit</v-btn>
-      <v-btn color="error">Delete</v-btn>
+      <v-btn color="error" @click="deleteTodo">Delete</v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -16,6 +16,12 @@ export default {
     title: String,
     completed: Boolean,
   },
+
+  methods: {
+    deleteTodo: function () {
+      this.$emit('deleteTodo', this.id);
+    }
+  }
 };
 </script>
 
