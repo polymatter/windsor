@@ -14,6 +14,7 @@
       :title="todo.title"
       :id="todo.id"
       @deleteTodo="deleteTodo"
+      @saveTodo="saveTodo"
     />
     <v-snackbar v-model="showDeleted">
       Deleted {{ deletedTitle }}
@@ -28,6 +29,15 @@
       Added {{ addedTitle }}
       <template v-slot:action="{ attrs }">
         <v-btn color="primary" text v-bind="attrs" @click="showAdded = false">
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
+
+    <v-snackbar v-model="showSaved">
+      Saved
+      <template v-slot:action="{ attrs }">
+        <v-btn color="primary" text v-bind="attrs" @click="showSaved = false">
           Close
         </v-btn>
       </template>
@@ -51,6 +61,7 @@ export default {
     todos: [],
     showDeleted: false,
     showAdded: false,
+    showSaved: false,
     deletedTitle: "",
     addedTitle: "",
   }),
@@ -64,7 +75,7 @@ export default {
         });
     },
     createTodo: function () {
-      const newTodoTitleBox = document.querySelector('#newTodoTitle')
+      const newTodoTitleBox = document.querySelector("#newTodoTitle");
       const newTodoTitle = newTodoTitleBox.value;
       fetch(url, {
         method: "POST",
@@ -78,7 +89,7 @@ export default {
         },
       })
         .then((response) => response.json())
-        .then(data => {
+        .then((data) => {
           this.todos.splice(0, 0, data);
           this.showAdded = true;
           this.addedTitle = data.title;
@@ -93,6 +104,23 @@ export default {
         this.deletedTitle = this.todos.filter((todo) => todo.id == id)[0].title;
         this.todos = this.todos.filter((todo) => todo.id != id);
       });
+    },
+    saveTodo: function ({ id, title }) {
+      fetch(`${url}/${id}`, {
+        method: "PUT",
+        body: JSON.stringify({
+          id, title,
+          userId: 1,
+        }),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+      }).then((response) => response.json())
+      .then(data => {
+        this.todos = this.todos.filter((todo) => todo.id != id);
+        this.todos.splice(0, 0, data);
+        this.showSaved = true;
+      })
     },
   },
 

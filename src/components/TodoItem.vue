@@ -1,10 +1,21 @@
 <template>
   <v-card>
-    <v-card-title>{{ title }}</v-card-title>
-    <v-card-actions>
-      <v-btn>Edit</v-btn>
-      <v-btn color="error" @click="deleteTodo">Delete</v-btn>
-    </v-card-actions>
+    <template v-if="!editMode">
+      <v-card-title>{{ title }}</v-card-title>
+      <v-card-actions>
+        <v-btn @click="editTodo">Edit</v-btn>
+        <v-btn color="error" @click="deleteTodo">Delete</v-btn>
+      </v-card-actions>
+    </template>
+    <template v-if="editMode">
+      <v-card-title v-if="editMode">
+        <v-text-field id="editTextBox" v-model="editTitle"></v-text-field>
+      </v-card-title>
+      <v-card-actions>
+        <v-btn @click="saveTodo">Save</v-btn>
+        <v-btn color="error" @click="cancelTodo">Cancel</v-btn>
+      </v-card-actions>
+    </template>
   </v-card>
 </template>
 
@@ -17,27 +28,31 @@ export default {
     completed: Boolean,
   },
 
+  data: () => ({
+    editMode: false,
+    editTitle: "",
+  }),
+
   methods: {
+    cancelTodo: function () {
+      this.editMode = false;
+    },
     deleteTodo: function () {
-      this.$emit('deleteTodo', this.id);
-    }
-  }
+      this.$emit("deleteTodo", this.id);
+    },
+    editTodo: function () {
+      this.editTitle = this.title;
+      this.editMode = true;
+    },
+    saveTodo: function () {
+      const newTitle = document.querySelector('#editTextBox').value;
+      this.$emit("saveTodo", { id: this.id, title: newTitle });
+      this.editMode = false;
+    },
+  },
 };
 </script>
 
 <style scoped>
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
+
 </style>
