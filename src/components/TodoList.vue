@@ -55,10 +55,11 @@ export default {
     deleteTodo: function (id) {
       fetch(`${url}/${id}`, {
         method: "DELETE",
+      }).then(() => {
+        this.showDeleted = true;
+        this.deletedTitle = this.todos.filter((todo) => todo.id == id)[0].title;
+        this.todos = this.todos.filter((todo) => todo.id != id);
       });
-      this.showDeleted = true;
-      this.deletedTitle = this.todos.filter(todo => todo.id == id)[0].title;
-      this.todos = this.todos.filter((todo) => todo.id != id);
     },
   },
 
