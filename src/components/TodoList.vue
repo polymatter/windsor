@@ -2,10 +2,10 @@
   <div class="todo-list">
     <v-card>
       <v-card-text>
-        <v-text-field placeholder="New Todo"></v-text-field>
+        <v-text-field id="newTodoTitle" placeholder="New Todo"></v-text-field>
       </v-card-text>
       <v-card-actions>
-        <v-btn color="primary">Add</v-btn>
+        <v-btn color="primary" @click="createTodo">Add</v-btn>
       </v-card-actions>
     </v-card>
     <TodoItem
@@ -41,7 +41,7 @@ export default {
   data: () => ({
     todos: [],
     showDeleted: false,
-    deletedTitle: ''
+    deletedTitle: "",
   }),
 
   methods: {
@@ -50,6 +50,24 @@ export default {
         .then((data) => data.json())
         .then((data) => {
           this.todos = data;
+        });
+    },
+    createTodo: function () {
+      const newTodoTitle = document.querySelector('#newTodoTitle').value;
+      fetch(url, {
+        method: "POST",
+        body: JSON.stringify({
+          title: newTodoTitle,
+          completed: false,
+          userId: 1,
+        }),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+      })
+        .then((response) => response.json())
+        .then(data => {
+          this.todos.splice(0, 0, data);
         });
     },
     deleteTodo: function (id) {
