@@ -71,7 +71,6 @@ describe('TodoList.vue', () => {
     const newItemTitleBox = wrapper.find("#newTodoTitle");
     await newItemTitleBox.setValue(newItemTitle);
     const createTodoBtn = wrapper.find("#createTodoBtn");
-    console.log(createTodoBtn.html());
 
     global.fetch = jest.fn().mockImplementationOnce(() => {
       return Promise.resolve({ json: () => Promise.resolve(newTodo) });
@@ -94,16 +93,35 @@ describe('TodoList.vue', () => {
     await flushPromises(); // wait for loading data
 
     const todoItems = wrapper.findAllComponents(TodoItem);
-    expect(todos.length).toEqual(todoItems.length);
+    expect(todoItems.length).toEqual(todos.length);
     const deleteBtn = wrapper.find(`#deleteBtn-${deleteTodoId}`);
 
     global.fetch = jest.fn().mockImplementationOnce(() => {
-      return Promise.resolve({ json: () => Promise.resolve(newTodo) });
+      return Promise.resolve({ json: () => Promise.resolve({}) });
     });
 
     await deleteBtn.trigger("click");
     const todoItemsAfterDelete = wrapper.findAllComponents(TodoItem);
-    expect(todos.length).toEqual(todoItemsAfterDelete.length + 1);
+    expect(todoItemsAfterDelete.length).toEqual(todos.length - 1);
   });
 
+  it('check a todo', async () => {
+    const checkTodoId = 6;
+    const wrapper = mount(TodoList, {
+      localVue,
+      vuetify,
+      propsData: { filter: '' },
+    });
+    await flushPromises(); // wait for loading data
+
+    const checkbox = wrapper.find(`#checkBox-${checkTodoId}`);
+    expect(checkbox.attributes('aria-checked')).toBe("false");
+
+    global.fetch = jest.fn().mockImplementationOnce(() => {
+      return Promise.resolve({ json: () => Promise.resolve({ ...todos[checkTodoId], checked: true }) });
+    });
+
+    await checkbox.trigger("click");
+    expect(checkbox.attributes('aria-checked')).toBe("true");
+  });
 });

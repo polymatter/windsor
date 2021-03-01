@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <template>
-      <v-card-title><v-checkbox :checked="completed" @click="checkTodo" :label="title" /></v-card-title>
+      <v-card-title><v-checkbox :id="checkBoxId" :checked="completed" @click="checkTodo" :label="title" /></v-card-title>
       <v-card-actions>
         <v-btn :id="deleteBtnId" color="error" @click="deleteTodo">Delete</v-btn>
       </v-card-actions>
@@ -28,6 +28,9 @@ export default {
   },
 
   computed: {
+    checkBoxId: function () {
+      return `checkBox-${this.id}`;
+    },
     deleteBtnId: function () {
       return `deleteBtn-${this.id}`;
     }
