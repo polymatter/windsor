@@ -17,6 +17,7 @@
       :key="todo.id"
       :title="todo.title"
       :id="todo.id"
+      :completed="todo.completed"
       @deleteTodo="deleteTodo"
       @checkTodo="checkTodo"
     />
