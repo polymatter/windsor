@@ -6,6 +6,17 @@
       <v-spacer></v-spacer>
 
       <v-text-field v-model="filter" placeholder="Filter" />
+
+      <v-spacer></v-spacer>
+
+      <v-btn
+        href="https://github.com/polymatter/windsor"
+        target="_blank"
+        text
+      >
+        <span class="mr-2">Github Repo</span>
+        <v-icon>mdi-open-in-new</v-icon>
+      </v-btn>
     </v-app-bar>
 
     <v-main>
@@ -25,7 +36,7 @@ export default {
   },
 
   data: () => ({
-    filter: ""
-  })
+    filter: "",
+  }),
 };
 </script>
