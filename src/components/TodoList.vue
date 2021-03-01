@@ -18,7 +18,7 @@
       :title="todo.title"
       :id="todo.id"
       @deleteTodo="deleteTodo"
-      @saveTodo="saveTodo"
+      @checkTodo="checkTodo"
     />
     <v-snackbar v-model="showDeleted">
       Deleted {{ deletedTitle }}
@@ -38,10 +38,10 @@
       </template>
     </v-snackbar>
 
-    <v-snackbar v-model="showSaved">
-      Saved
+    <v-snackbar v-model="showChecked">
+      {{ checkedStatus ? "Checked" : "Unchecked" }}
       <template v-slot:action="{ attrs }">
-        <v-btn color="primary" text v-bind="attrs" @click="showSaved = false">
+        <v-btn color="primary" text v-bind="attrs" @click="showChecked = false">
           Close
         </v-btn>
       </template>
@@ -50,6 +50,7 @@
 </template>
 
 <script>
+import Vue from 'vue';
 import TodoItem from "./TodoItem";
 
 const url = "https://jsonplaceholder.typicode.com/todos";
@@ -67,9 +68,10 @@ export default {
     todos: [],
     showDeleted: false,
     showAdded: false,
-    showSaved: false,
+    showChecked: false,
     deletedTitle: "",
     addedTitle: "",
+    checkedStatus: "",
   }),
 
   methods: {
@@ -111,23 +113,21 @@ export default {
         this.todos = this.todos.filter((todo) => todo.id != id);
       });
     },
-    saveTodo: function ({ id, title }) {
+    checkTodo: function ({ id }) {
+      const todo = this.todos.filter(todo => todo.id == id).pop();
+      const todoIndex = this.todos.findIndex(todo => todo.id == id);
       fetch(`${url}/${id}`, {
         method: "PUT",
-        body: JSON.stringify({
-          id,
-          title,
-          userId: 1,
-        }),
+        body: JSON.stringify({...todo, completed: !todo.completed}),
         headers: {
           "Content-type": "application/json; charset=UTF-8",
         },
       })
         .then((response) => response.json())
         .then((data) => {
-          this.todos = this.todos.filter((todo) => todo.id != id);
-          this.todos.splice(0, 0, data);
-          this.showSaved = true;
+          Vue.set(this.todos, todoIndex, data);
+          this.showChecked = true;
+          this.checkedStatus = data.completed;
         });
     },
   },
