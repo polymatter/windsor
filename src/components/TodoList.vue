@@ -6,7 +6,7 @@
         <v-text-field id="newTodoTitle" placeholder="New Todo"></v-text-field>
       </v-card-text>
       <v-card-actions>
-        <v-btn color="primary" @click="createTodo">Add</v-btn>
+        <v-btn color="primary" id="createTodoBtn" @click="createTodo">Add</v-btn>
       </v-card-actions>
     </v-card>
 

@@ -4,7 +4,7 @@
       <v-card-title>{{ title }}</v-card-title>
       <v-card-actions>
         <v-btn @click="editTodo">Edit</v-btn>
-        <v-btn color="error" @click="deleteTodo">Delete</v-btn>
+        <v-btn :id="deleteBtnId" color="error" @click="deleteTodo">Delete</v-btn>
       </v-card-actions>
     </template>
     <template v-if="editMode">
@@ -50,6 +50,12 @@ export default {
       this.editMode = false;
     },
   },
+
+  computed: {
+    deleteBtnId: function () {
+      return `deleteBtn-${this.id}`;
+    }
+  }
 };
 </script>
 
