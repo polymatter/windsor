@@ -1,9 +1,17 @@
 <template>
   <v-card>
     <template>
-      <v-card-title><v-checkbox :id="checkBoxId" v-model="completed" @click="checkTodo" :label="title" /></v-card-title>
+      <v-card-title
+        ><v-checkbox
+          :id="checkBoxId"
+          v-model="completedModel"
+          @click="checkTodo"
+          :label="title"
+      /></v-card-title>
       <v-card-actions>
-        <v-btn :id="deleteBtnId" color="error" @click="deleteTodo">Delete</v-btn>
+        <v-btn :id="deleteBtnId" color="error" @click="deleteTodo"
+          >Delete</v-btn
+        >
       </v-card-actions>
     </template>
   </v-card>
@@ -33,8 +41,18 @@ export default {
     },
     deleteBtnId: function () {
       return `deleteBtn-${this.id}`;
-    }
-  }
+    },
+    completedModel: {
+      get() {
+        return this.completed;
+      },
+      set(completed) {
+        const newvalue = { id: this.id, title: this.title, completed }
+
+        return this.$emit("updateTodo", newvalue);
+      },
+    },
+  },
 };
 </script>
 

@@ -20,62 +20,57 @@
       :completed="todo.completed"
       @deleteTodo="deleteTodo"
       @checkTodo="checkTodo"
+      @updateTodo="updateTodo"
     />
-    <v-snackbar v-model="showDeleted">
-      Deleted {{ deletedTitle }}
-      <template v-slot:action="{ attrs }">
-        <v-btn color="red" text v-bind="attrs" @click="showDeleted = false">
-          Close
-        </v-btn>
-      </template>
-    </v-snackbar>
 
-    <v-snackbar v-model="showAdded">
-      Added {{ addedTitle }}
-      <template v-slot:action="{ attrs }">
-        <v-btn color="primary" text v-bind="attrs" @click="showAdded = false">
-          Close
-        </v-btn>
-      </template>
-    </v-snackbar>
-
-    <v-snackbar v-model="showChecked">
-      {{ checkedStatus ? "Checked" : "Unchecked" }}
-      <template v-slot:action="{ attrs }">
-        <v-btn color="primary" text v-bind="attrs" @click="showChecked = false">
-          Close
-        </v-btn>
-      </template>
-    </v-snackbar>
+    <Notification
+      v-for="(notification, index) in notifications"
+      :key="notification.id"
+      :message="notification.message"
+      :index="index"
+      @closeclick="removeNotification"
+    />
   </div>
 </template>
 
 <script>
-import Vue from 'vue';
+import Vue from "vue";
 import TodoItem from "./TodoItem";
+import Notification from "./Notification";
 
 const url = "https://jsonplaceholder.typicode.com/todos";
 
 export default {
   name: "TodoList",
   props: {
-    filter: String
+    filter: String,
   },
   components: {
     TodoItem,
+    Notification,
   },
 
   data: () => ({
     todos: [],
-    showDeleted: false,
-    showAdded: false,
-    showChecked: false,
-    deletedTitle: "",
-    addedTitle: "",
-    checkedStatus: "",
+    notifications: [],
   }),
 
   methods: {
+    addNotification: function (message) {
+      this.notifications.push({
+        id: `notifications-${Math.random()}`,
+        message,
+      });
+    },
+    updateTodo: function (updatedTodo) {
+      const todoIndex = this.todos.findIndex(
+        (todo) => todo.id == updatedTodo.id
+      );
+      Vue.set(this.todos, todoIndex, updatedTodo);
+    },
+    removeNotification: function (notificationIndex) {
+      this.$delete(this.notifications, notificationIndex);
+    },
     updateTodos: function () {
       fetch(url)
         .then((data) => data.json())
@@ -100,43 +95,47 @@ export default {
         .then((response) => response.json())
         .then((data) => {
           this.todos.splice(0, 0, data);
-          this.showAdded = true;
-          this.addedTitle = data.title;
           newTodoTitleBox.value = "";
+
+          this.addNotification(`Added ${data.title}`);
         });
     },
     deleteTodo: function (id) {
       fetch(`${url}/${id}`, {
         method: "DELETE",
       }).then(() => {
-        this.showDeleted = true;
-        this.deletedTitle = this.todos.filter((todo) => todo.id == id)[0].title;
+        this.addNotification(`Deleted ${this.todos[id].title}`);
         this.todos = this.todos.filter((todo) => todo.id != id);
       });
     },
     checkTodo: function ({ id }) {
-      const todo = this.todos.filter(todo => todo.id == id).pop();
-      const todoIndex = this.todos.findIndex(todo => todo.id == id);
+      const todo = this.todos.filter((todo) => todo.id == id).pop();
+
       fetch(`${url}/${id}`, {
         method: "PUT",
-        body: JSON.stringify({...todo, completed: !todo.completed}),
+        body: JSON.stringify({ ...todo, completed: !todo.completed }),
         headers: {
           "Content-type": "application/json; charset=UTF-8",
         },
       })
         .then((response) => response.json())
         .then((data) => {
-          Vue.set(this.todos, todoIndex, data);
-          this.showChecked = true;
-          this.checkedStatus = data.completed;
+          const todoIndex = this.todos.findIndex((todo) => todo.id == id);
+          this.addNotification(
+            `${this.todos[todoIndex].completed ? "Checked" : "Unchecked"} ${
+              data.title
+            }`
+          );
         });
     },
   },
 
   computed: {
-    filteredTodos: function() {
-      return this.todos.filter(todo => todo.title.match(this.filter));
-    }
+    filteredTodos: function () {
+      return this.todos.filter((todo) =>
+        todo.title.match(new RegExp(this.filter, "i"))
+      );
+    },
   },
 
   mounted: function () {
