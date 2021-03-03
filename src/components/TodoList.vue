@@ -49,7 +49,7 @@ const url = "https://jsonplaceholder.typicode.com/todos";
 export default {
   name: "TodoList",
   props: {
-    filter: String,
+    filterFunction: Function,
   },
   components: {
     TodoItem,
@@ -168,9 +168,7 @@ export default {
 
   computed: {
     filteredTodos: function () {
-      return this.todos.filter((todo) =>
-        todo.title.match(new RegExp(this.filter, "i"))
-      );
+      return this.filterFunction(this.todos);
     },
   },
 
