@@ -25,8 +25,7 @@
       :id="todo.id"
       :completed="todo.completed"
       @deleteTodo="deleteTodo"
-      @checkTodo="checkTodo"
-      @updateTodo="updateTodo"
+      @saveTodo="saveTodo"
     />
 
     <Notification
@@ -124,44 +123,37 @@ export default {
         });
     },
     deleteTodo: function (id) {
+      const todoTitle = this.todos.find(todo => todo.id == id)?.title;
       fetch(`${url}/${id}`, {
         method: "DELETE",
       })
         .then(() => {
-          this.addNotification(`Deleted ${this.todos[id].title}`);
+          this.addNotification(`Deleted ${todoTitle}`);
           this.todos = this.todos.filter((todo) => todo.id != id);
         })
         .catch((reason) => {
           this.addNotification(
-            `Error: Failed to delete todo with id ${id} and title ${
-              this.todos.find((todo) => todo.id == id)?.title
-            }`
+            `Error: Failed to delete todo with id ${id} and title ${todoTitle}`
           );
           console.error(reason);
         });
     },
-    checkTodo: function ({ id }) {
-      const todo = this.todos.find((todo) => todo.id == id);
-
-      fetch(`${url}/${id}`, {
+    saveTodo: function(newTodo) {
+      fetch(`${url}/${newTodo.id}`, {
         method: "PUT",
-        body: JSON.stringify({ ...todo, completed: !todo.completed }),
+        body: JSON.stringify(newTodo),
         headers: {
           "Content-type": "application/json; charset=UTF-8",
         },
       })
         .then((response) => response.json())
-        .then((data) => {
-          const todoIndex = this.todos.findIndex((todo) => todo.id == id);
-          this.addNotification(
-            `${this.todos[todoIndex].completed ? "Checked" : "Unchecked"} ${
-              data.title
-            }`
-          );
+        .then(() => {
+          this.addNotification(`Updated ${this.todos.find(todo => todo.id == newTodo.id)?.title}`);
         })
         .catch((reason) => {
+          const oldTodo = this.todos.find(todo => todo.id == newTodo.id);
           this.addNotification(
-            `Error: Failed to update todo with id ${id} and title ${todo?.title}`
+            `Error: Failed to update todo with id ${newTodo.id} and title ${oldTodo?.title}`
           );
           console.error(reason);
         });
