@@ -9,7 +9,7 @@
           :label="title"
       /></v-card-title>
       <v-card-actions>
-        <v-btn :id="deleteBtnId" color="error" @click="deleteTodo"
+        <v-btn :id="deleteBtnId" color="error" @click="deleteTodo" :loading="isWaitingForDelete"
           >Delete</v-btn
         >
       </v-card-actions>
@@ -23,11 +23,16 @@ export default {
   props: {
     id: Number,
     title: String,
-    completed: Boolean,
+    completed: Boolean
   },
+
+  data: () => ({
+    isWaitingForDelete: false
+  }),
 
   methods: {
     deleteTodo: function () {
+      this.isWaitingForDelete = true;
       this.$emit("deleteTodo", this.id);
     },
     checkTodo: function () {
