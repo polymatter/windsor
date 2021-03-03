@@ -8,6 +8,7 @@ import todos from '../todos.json';
 describe('TodoList.vue', () => {
   const localVue = createLocalVue()
   let vuetify
+  let identifyFunction = x => x;
 
   beforeEach(() => {
     vuetify = new Vuetify();
@@ -21,7 +22,7 @@ describe('TodoList.vue', () => {
     const wrapper = mount(TodoList, {
       localVue,
       vuetify,
-      propsData: { filter: '' },
+      propsData: { filterFunction: identifyFunction },
     });
     expect(wrapper.text()).toContain('Todo'); //displays title
     await flushPromises(); // wait for loading data
@@ -34,15 +35,15 @@ describe('TodoList.vue', () => {
   });
 
   it('filters todos based on title', async () => {
-    const filter = todos[4].title;
+    const filterFunction = todos => todos.filter(todo => todo.title.match(new RegExp(todos[4].title, "i")));
     const wrapper = mount(TodoList, {
       localVue,
       vuetify,
-      propsData: { filter },
+      propsData: { filterFunction },
     });
     await flushPromises(); // wait for loading data
     const todoItems = wrapper.findAllComponents(TodoItem);
-    const filteredTodos = todos.filter(todo => todo.title.includes(filter));
+    const filteredTodos = filterFunction(todos);
     expect(todoItems.length == filteredTodos.length);
     filteredTodos.forEach(todo => {
       expect(todoItems.filter(itemWrapper => itemWrapper.text().includes(todo.title)).length).toBeGreaterThanOrEqual(1);
@@ -62,7 +63,7 @@ describe('TodoList.vue', () => {
     const wrapper = mount(TodoList, {
       localVue,
       vuetify,
-      propsData: { filter: '' },
+      propsData: { filterFunction: identifyFunction },
     });
     await flushPromises(); // wait for loading data
 
@@ -88,7 +89,7 @@ describe('TodoList.vue', () => {
     const wrapper = mount(TodoList, {
       localVue,
       vuetify,
-      propsData: { filter: '' },
+      propsData: { filterFunction: identifyFunction },
     });
     await flushPromises(); // wait for loading data
 
@@ -101,6 +102,7 @@ describe('TodoList.vue', () => {
     });
 
     await deleteBtn.trigger("click");
+    await flushPromises();
     const todoItemsAfterDelete = wrapper.findAllComponents(TodoItem);
     expect(todoItemsAfterDelete.length).toEqual(todos.length - 1);
   });
@@ -110,7 +112,7 @@ describe('TodoList.vue', () => {
     const wrapper = mount(TodoList, {
       localVue,
       vuetify,
-      propsData: { filter: '' },
+      propsData: { filterFunction: identifyFunction },
     });
     await flushPromises(); // wait for loading data
 
