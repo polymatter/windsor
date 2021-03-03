@@ -24,6 +24,7 @@
       :title="todo.title"
       :id="todo.id"
       :completed="todo.completed"
+      :waitForSave="todo.waitForSave"
       @deleteTodo="deleteTodo"
       @saveTodo="saveTodo"
     />
@@ -139,6 +140,9 @@ export default {
         });
     },
     saveTodo: function(newTodo) {
+      const todo = this.todos.find(todo => todo.id == newTodo.id);
+      todo.waitForSave = true;
+      Vue.set(this.todos, this.todos.findIndex(todo => todo.id == newTodo.id), todo);
       fetch(`${url}/${newTodo.id}`, {
         method: "PUT",
         body: JSON.stringify(newTodo),
@@ -148,15 +152,17 @@ export default {
       })
         .then((response) => response.json())
         .then(() => {
-          this.addNotification(`Updated ${this.todos.find(todo => todo.id == newTodo.id)?.title}`);
+          this.addNotification(`Updated ${todo?.title}`);
         })
         .catch((reason) => {
-          const oldTodo = this.todos.find(todo => todo.id == newTodo.id);
           this.addNotification(
-            `Error: Failed to update todo with id ${newTodo.id} and title ${oldTodo?.title}`
+            `Error: Failed to update todo with id ${newTodo.id} and title ${todo?.title}`
           );
           console.error(reason);
-        });
+        }).finally(() => {
+          todo.waitForSave = false;
+          Vue.set(this.todos, this.todos.findIndex(todo => todo.id == newTodo.id), todo);
+        })
     },
   },
 

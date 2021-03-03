@@ -8,7 +8,7 @@
           @click="checkTodo"
       />{{newTitle}}</v-card-title>
       <v-card-actions>
-        <v-btn :id="editBoxId" @click="toggleEditMode">Edit Title</v-btn>
+        <v-btn :id="editBoxId" @click="toggleEditMode" :loading="waitForSave">Edit Title</v-btn>
         <v-btn
           :id="deleteBtnId"
           color="error"
@@ -48,6 +48,7 @@ export default {
     id: Number,
     title: String,
     completed: Boolean,
+    waitForSave: Boolean,
   },
 
   data: () => ({
@@ -69,7 +70,7 @@ export default {
       }, waitingForDeleteTimeout);
     },
     checkTodo: function () {
-      this.$emit("saveTodo", { id: this.id });
+      this.$emit("saveTodo", { id: this.id, title: this.title, completed: this.completed });
     },
     saveTodo: function () {
       this.$emit("saveTodo", { id: this.id, title: this.newTitle, completed: this.completed })
