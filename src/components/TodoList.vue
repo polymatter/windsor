@@ -6,7 +6,13 @@
         <v-text-field id="newTodoTitle" placeholder="New Todo"></v-text-field>
       </v-card-text>
       <v-card-actions>
-        <v-btn color="primary" id="createTodoBtn" @click="createTodo">Add</v-btn>
+        <v-btn
+          color="primary"
+          id="createTodoBtn"
+          @click="createTodo"
+          :loading="isWaitingForAdd"
+          >Add</v-btn
+        >
       </v-card-actions>
     </v-card>
 
@@ -53,6 +59,7 @@ export default {
   data: () => ({
     todos: [],
     notifications: [],
+    isWaitingForAdd: false,
   }),
 
   methods: {
@@ -82,6 +89,7 @@ export default {
         });
     },
     createTodo: function () {
+      this.isWaitingForAdd = true;
       const newTodoTitleBox = document.querySelector("#newTodoTitle");
       const newTodoTitle = newTodoTitleBox.value;
       fetch(url, {
@@ -104,6 +112,8 @@ export default {
         }).catch(reason => {
           this.addNotification(`Error: Failed to create todo with the title ${newTodoTitle}`);
           console.error(reason);
+        }).finally(() => {
+          this.isWaitingForAdd = false;
         });
     },
     deleteTodo: function (id) {
