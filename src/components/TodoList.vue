@@ -76,6 +76,9 @@ export default {
         .then((data) => data.json())
         .then((data) => {
           this.todos = data;
+        }).catch(reason => {
+          this.addNotification(`Error: Failed to update todo list. Please check your network connection`);
+          console.error(reason);
         });
     },
     createTodo: function () {
@@ -98,6 +101,9 @@ export default {
           newTodoTitleBox.value = "";
 
           this.addNotification(`Added ${data.title}`);
+        }).catch(reason => {
+          this.addNotification(`Error: Failed to create todo with the title ${newTodoTitle}`);
+          console.error(reason);
         });
     },
     deleteTodo: function (id) {
@@ -106,10 +112,13 @@ export default {
       }).then(() => {
         this.addNotification(`Deleted ${this.todos[id].title}`);
         this.todos = this.todos.filter((todo) => todo.id != id);
-      });
+      }).catch(reason => {
+          this.addNotification(`Error: Failed to delete todo with id ${id} and title ${this.todos.find(todo => todo.id == id)?.title}`);
+          console.error(reason);
+        });
     },
     checkTodo: function ({ id }) {
-      const todo = this.todos.filter((todo) => todo.id == id).pop();
+      const todo = this.todos.find(todo => todo.id == id);
 
       fetch(`${url}/${id}`, {
         method: "PUT",
@@ -126,6 +135,9 @@ export default {
               data.title
             }`
           );
+        }).catch(reason => {
+          this.addNotification(`Error: Failed to update todo with id ${id} and title ${todo?.title}`);
+          console.error(reason);
         });
     },
   },
