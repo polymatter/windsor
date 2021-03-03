@@ -83,8 +83,14 @@ export default {
       return value => f2(f1(value));
     },
     filterByTitle: function(todos) {
-      const CASE_INSENSITIVE = "i";
-      return todos.filter(todo => todo.title.match(new RegExp(this.filterTitle, CASE_INSENSITIVE)));
+      let regex;
+      try {
+        const CASE_INSENSITIVE = "i";
+        regex = new RegExp(this.filterTitle, CASE_INSENSITIVE)
+      } catch {
+        return todos;
+      }
+      return todos.filter(todo => todo.title.match(regex));
     }
   },
 
